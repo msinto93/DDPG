@@ -1,4 +1,4 @@
-# DDPG
+# Deep Deterministic Policy Gradients (DDPG)
 A Tensorflow implementation of a [**Deep Deterministic Policy Gradient (DDPG) network**](https://arxiv.org/pdf/1509.02971.pdf) for continuous control.
 
 ![](https://image.ibb.co/i5uzQq/actor-critic.png)
