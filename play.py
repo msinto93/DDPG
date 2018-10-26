@@ -105,7 +105,7 @@ def play(args):
             os.remove(filename)
              
         # Save as gif
-        imageio.mimsave('./video/%s.gif' % args.env, images, duration=0.01)       
+        imageio.mimsave(args.record_dir + '/%s.gif' % args.env, images, duration=0.01)            
                        
 
 if  __name__ == '__main__':
