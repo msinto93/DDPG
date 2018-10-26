@@ -39,9 +39,9 @@ This shell script should be run alongside the training script, allowing to perio
 ```
 Once we have a trained network, we can visualise its performance in the environment by running `play.py`. This will play the environment on screen using the trained network and save a GIF (optional).
 
-**Note:** To reproduce the best 100-episode performance of **-124.17 +/- 6.88** that achieved the top score on the ['Pendulum-v0' OpenAI leaderboard](https://github.com/openai/gym/wiki/Leaderboard#pendulum-v0), run:
+**Note:** To reproduce the best 100-episode performance of **-123.79 +/- 6.90** that achieved the top score on the ['Pendulum-v0' OpenAI leaderboard](https://github.com/openai/gym/wiki/Leaderboard#pendulum-v0), run:
 ```
-  $ python test.py --ckpt_file 'Pendulum-v0.ckpt-15400'
+  $ python test.py --ckpt_file 'Pendulum-v0.ckpt-26800'
 ```
 
 ## Results
@@ -51,12 +51,12 @@ Result of training the DDPG on the 'Pendulum-v0' environment:
 
 Result of training the DDPG on the 'BipedalWalker-v2' environment:
 
+*To-Do*
 ![](/video/BipedalWalker-v2.gif)
 
 | **Environment**      | **Best 100-episode performance** | **Ckpt file** |
 |----------------------|----------------------------------|---------------|
-| Pendulum-v0          |                                  | ckpt-15400    |
-| BipedalWalker-v2     |                                  |               |
+| Pendulum-v0          |  -123.79 +- 6.90                 | ckpt-26800    |
 
 ## To-do
 - The above results are obtained with `--use_batch_norm` set to **False**. The way batch norm is implemented here seems to hinder performance on these environments. Why is this the case? Is there a problem with the implementation?
