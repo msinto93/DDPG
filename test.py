@@ -36,8 +36,7 @@ def get_test_args(train_args):
     # Files/directories
     test_params.add_argument("--ckpt_dir", type=str, default='./ckpts', help="Directory for saving/loading checkpoints")
     test_params.add_argument("--ckpt_file", type=str, default=None, help="Checkpoint file to load and resume training from (if None, load latest ckpt)")
-    test_params.add_argument("--results_dir", type=str, default='./test_results', help="Directory for saving txt file of results")
-    test_params.add_argument("--results_file", type=str, default='results.txt', help="Text file of test results (if None, do not save results)")
+    test_params.add_argument("--results_dir", type=str, default='./test_results', help="Directory for saving txt file of results (if None, do not save results)")
     test_params.add_argument("--log_dir", type=str, default='./logs/test', help="Directory for saving Tensorboard logs")
     
     return test_params.parse_args()
@@ -131,10 +130,10 @@ def test(args):
     summary_writer.add_summary(summary_str, train_ep)
      
     # Write results to file        
-    if args.results_file is not None:
+    if args.results_dir is not None:
         if not os.path.exists(args.results_dir):
             os.makedirs(args.results_dir)
-        output_file = open(args.results_dir + '/' + args.results_file, 'a')
+        output_file = open(args.results_dir + '/' + args.env + '.txt', 'a')
         output_file.write('Training Episode {}: \t Average reward = {:.2f} +/- {:.2f} /ep \n\n'.format(train_ep, mean_reward, error_reward))
         output_file.flush()
         sys.stdout.write('Results saved to file \n\n')
