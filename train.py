@@ -180,13 +180,16 @@ def train(args):
         state = env.reset()
         exploration_noise.reset()
         
+        train_step = 0
         episode_reward = 0
         duration_values = []
+        ep_done = False
         
         sys.stdout.write('\n')   
         sys.stdout.flush()
         
-        for train_step in range(1, args.max_ep_length+1):  
+        while not ep_done:
+            train_step += 1
             start_time = time.time()            
             ## Take action and store experience
             if args.render:
@@ -236,11 +239,11 @@ def train(args):
             sys.stdout.write('\x1b[2K\rEpisode {:d}/{:d} \t Steps = {:d} \t Reward = {:.3f} \t ({:.3f} s/step)'.format(train_ep, args.num_eps_train, train_step, episode_reward, ave_duration))
             sys.stdout.flush()  
         
-            if terminal:
+            if terminal or train_step == args.max_ep_length:
                 # Log total episode reward and begin next episode
                 summary_str = sess.run(summary_op, {ep_reward_var: episode_reward})
                 summary_writer.add_summary(summary_str, train_ep)
-                break
+                ep_done = True
         
         if train_ep % args.save_ckpt_step == 0:
             saver.save(sess, checkpoint_path, global_step=train_ep)
