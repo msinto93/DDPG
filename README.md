@@ -59,7 +59,6 @@ Result of training the DDPG on the 'BipedalWalker-v2' environment:
 | Pendulum-v0          |  -123.79 +- 6.90                 | ckpt-26800    |
 
 ## To-do
-- The above results are obtained with `--use_batch_norm` set to **False**. The way batch norm is implemented here seems to hinder performance on these environments. Why is this the case? Is there a problem with the implementation?
 - Train/test on further environments, including [Mujoco](http://www.mujoco.org/)
 
 ## References
