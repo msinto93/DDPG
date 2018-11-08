@@ -22,7 +22,7 @@ def get_train_args():
     # Environment parameters
     train_params.add_argument("--env", type=str, default='Pendulum-v0', help="Environment to use (must have low dimensional state space (i.e. not image) and continuous action space)")
     train_params.add_argument("--render", type=bool, default=False, help="Whether or not to display the environment on the screen during training")
-    train_params.add_argument("--random_seed", type=int, default=1234, help="Random seed for reproducability")
+    train_params.add_argument("--random_seed", type=int, default=99999999, help="Random seed for reproducability")
     
     # Training parameters
     train_params.add_argument("--batch_size", type=int, default=64)
@@ -88,19 +88,20 @@ def train(args):
     action_ph = tf.placeholder(tf.float32, ((None,) + action_dims))
     target_ph = tf.placeholder(tf.float32, (None, 1))  # Target Q-value - for critic training
     action_grads_ph = tf.placeholder(tf.float32, ((None,) + action_dims)) # Gradient of critic's value output wrt action input - for actor training
+    is_training_ph = tf.placeholder_with_default(True, shape=None)
     
     # Create value (critic) network + target network
     if args.use_batch_norm:
-        critic = Critic_BN(state_ph, action_ph, state_dims, action_dims, args, is_training=True, scope='critic_main')
-        critic_target = Critic_BN(state_ph, action_ph, state_dims, action_dims, args, is_training=True, scope='critic_target')
+        critic = Critic_BN(state_ph, action_ph, state_dims, action_dims, args, is_training=is_training_ph, scope='critic_main')
+        critic_target = Critic_BN(state_ph, action_ph, state_dims, action_dims, args, is_training=is_training_ph, scope='critic_target')
     else:
         critic = Critic(state_ph, action_ph, state_dims, action_dims, args, scope='critic_main')
         critic_target = Critic(state_ph, action_ph, state_dims, action_dims, args, scope='critic_target')
     
     # Create policy (actor) network + target network
     if args.use_batch_norm:
-        actor = Actor_BN(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, is_training=True, scope='actor_main')
-        actor_target = Actor_BN(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, is_training=True, scope='actor_target')
+        actor = Actor_BN(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, is_training=is_training_ph, scope='actor_main')
+        actor_target = Actor_BN(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, is_training=is_training_ph, scope='actor_target')
     else:
         actor = Actor(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, scope='actor_main')
         actor_target = Actor(state_ph, state_dims, action_dims, action_bound_low, action_bound_high, args, scope='actor_target')
@@ -190,7 +191,10 @@ def train(args):
             ## Take action and store experience
             if args.render:
                 env.render()
-            action = sess.run(actor.output, {state_ph:np.expand_dims(state, 0)})[0]     # Add batch dimension to single state input, and remove batch dimension from single action output
+            if args.use_batch_norm:
+                action = sess.run(actor.output, {state_ph:np.expand_dims(state, 0), is_training_ph:False})[0]     # Add batch dimension to single state input, and remove batch dimension from single action output
+            else:
+                action = sess.run(actor.output, {state_ph:np.expand_dims(state, 0)})[0]     
             action += exploration_noise() * noise_scaling
             state, reward, terminal, _ = env.step(action)
             replay_mem.add(action, reward, state, terminal)
